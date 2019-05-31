@@ -1,5 +1,6 @@
 #include <base/component.h>
 #include <base/log.h>
+#include <base/printf.h>
 
 #include <util/string.h>
 
@@ -53,7 +54,13 @@ class Custom::Pd_session_component : public Genode::Rpc_object<Genode::Pd_sessio
   Ram_dataspace_capability alloc(Genode::size_t size, Genode::Cache_attribute attr)
   {
     Genode::log("Pd::\033[33m", __func__, "\033[0m");
-    return _parent_pd.alloc(size, attr);
+    Ram_dataspace_capability cap = _parent_pd.alloc(size, attr);
+    char *foo=_env.rm().attach(cap);
+    for(int i=0; i<size; i++)
+    {
+        *(foo+i)=1;
+    }
+    return cap;
   }
 
   void free(Ram_dataspace_capability ds)
